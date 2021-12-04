@@ -34,14 +34,16 @@ function board_sum(board) {
   return sum;
 }
 
-function bingo() {
+function bingo(remove_bingos) {
   bingo_having_board = null;
 
-  bingo_boards.map(board => {
+  bingo_boards = bingo_boards.filter(board => {
+    winning_board = false;
     board.map(row => {
       if (row.length == 5 && row.every(number => { return number === '**'; }) === true) {
         if (bingo_having_board == null) {
           bingo_having_board = board;
+          winning_board = true;
         }
       }
     });
@@ -49,10 +51,14 @@ function bingo() {
     for (index = 0; index < board[0].length; index++) {
       got_bingo = true;
       board.forEach(rows => { if (rows[index] != '**') got_bingo = false; });
-      if (got_bingo == true && bingo_having_board == null) {
-        bingo_having_board = board;
+      if (got_bingo == true) {
+        if (bingo_having_board == null)
+          bingo_having_board = board;
+          winning_board = true;
       }
     }
+
+    return !(remove_bingos == true && winning_board);
   });
 
   return bingo_having_board;
@@ -60,7 +66,7 @@ function bingo() {
 
 bingo_numbers.every(bingo_number => {
   mark(bingo_number);
-  board_with_bingo = bingo();
+  board_with_bingo = bingo(false);
    
   if (board_with_bingo) {
     console.log('BINGO');
@@ -68,6 +74,19 @@ bingo_numbers.every(bingo_number => {
     console.log(`The last mark was ${bingo_number}`);
     console.log(board_with_bingo);
     return false;
+  }
+  return true;
+});
+
+bingo_numbers.every(bingo_number => {
+  mark(bingo_number);
+  board_with_bingo = bingo(true);
+   
+  if (board_with_bingo) {
+    console.log('BINGO');
+    console.log(`The sum of the board is ${board_sum(board_with_bingo)}`);
+    console.log(`The last mark was ${bingo_number}`);
+    console.log(board_with_bingo);
   };
   return true;
 });
