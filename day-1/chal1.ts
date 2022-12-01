@@ -2,13 +2,14 @@ import { readFileSync } from 'fs';
 
 const input = readFileSync('./input', 'utf-8');
 
-const calorie_chunks = input.split(/\n\n/)
-  .map(chunk => { 
-    return chunk
+const calories_carried_by_elves = input.split(/\n\n/)
+  .map(elf_calories => {
+    return elf_calories
       .split(/\n/)
-      .map(calories => parseInt(calories))
-      .reduce((total,calories) => total + calories, 0);
-  })
-  .filter(calorie_chunk => !isNaN(calorie_chunk));
+      .map(calories => parseInt(calories) || 0)
+      .reduce((total, calories) => total + calories, 0);
+  });
 
-console.log(Math.max(...calorie_chunks));
+let highest_calories = Math.max(...calories_carried_by_elves);
+
+console.log(highest_calories);
