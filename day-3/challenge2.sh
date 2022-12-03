@@ -1,0 +1,2 @@
+#!/bin/bash
+for i in `seq 1 3 $(wc -l < input)`; do o=$(($i+2)); woot=$(sed -n "${i}p" input); for (( c=0; c<${#woot}; c++ )); do if [[ $(sed -n "${i},${o}p" input | pcre2grep -M ".*${woot:$c:1}.*\n.*${woot:$c:1}.*\n.*${woot:$c:1}.*" | wc -l) -eq 3 ]]; then echo ${woot:$c:1}; character=$(echo -n ${woot:$c:1} | od -An -tuC); if [[ ${woot:$c:1} =~ [A-Z] ]]; then echo $(($character - 38)); else echo $(( $character - 96 )); fi; break; fi; done; done | awk '{s+=$1} END {print s}'
