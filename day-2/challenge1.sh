@@ -1,2 +1,2 @@
 #!/bin/bash
-cat input | sed 's/ //g' | xargs -I{} bash -c 'echo -n {} | od -An -tuC' | sed '/^\s*$/d' | sed 's/ //g' | xargs -n1 -I{} sh -c "echo {} | cut -c 3- | sed 's/\(.*\)/1 \+ \1-88/g' | bc | tr '\n' '+' ; echo {} | sed 's/\([0-9]\{2\}\)\([0-9]\{2\}\)/scale=0; \(\(\(\1 - 65\) - \(\2 - 88\) + 3\) % 3\)/' | bc -l | sed 's/2/6/g' | sed 's/0/3/g' | sed 's/1/0/g'" | bc | awk '{s+=$1} END {print s}'
+cat input | sed 's/ //g' | xargs -I{} bash -c 'echo -n {} | od -An -tuC' | sed 's/ //g' | xargs -n1 -I{} bash -c "echo {} | cut -c 3- | sed 's/\(.*\)/1 \+ \1-88/g' | bc | tr '\n' '+' ; echo \"scale=0; (((\$(echo {} | cut -c -2) - 65) - (\$(echo {} | cut -c 3-) - 88) + 3) % 3)\" | bc -l | tr 2 6 | tr 0 3 | tr 1 0" | bc | awk '{s+=$1} END {print s}'
