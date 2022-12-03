@@ -6,12 +6,7 @@ let rucksacks = input.split(/\n/);
 let badges: string[] = [];
 
 function find_badge(rucksack1: string, rucksack2: string, rucksack3: string): string {
-  for (var offset = 0; offset < rucksack1.length; offset++) {
-    if (rucksack2.includes(rucksack1[offset]) && rucksack3.includes(rucksack1[offset]))
-      return rucksack1[offset];
-  }
-
-  throw 'Well shit.';
+  return rucksack1.split('').filter(item => rucksack2.includes(item) && rucksack3.includes(item))[0];
 }
 
 for (let group = 0; group < rucksacks.length - 1; group += 3) {
