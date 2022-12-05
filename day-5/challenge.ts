@@ -22,6 +22,8 @@ input.split(/\n\n/)[0]
     }
   });
 
+let stacks_2: string[][] = JSON.parse(JSON.stringify(stacks));
+
 input.split(/\n\n/)[1]
   .split(/\n/)
   .filter(line => line !== '')
@@ -35,12 +37,20 @@ input.split(/\n\n/)[1]
     let from = move[1];
     let to = move[2];
 
-    let crates = stacks[from-1].slice(0, amount);
-    stacks[from-1] = stacks[from-1].slice(amount);
+    // Challenge 1
+    for (let i = 0; i < amount; i++) {
+      let crate = stacks[from-1].shift();
+      stacks[to-1].unshift(String(crate));
+    }
+
+    // Challenge 2
+    let crates = stacks_2[from-1].slice(0, amount);
+    stacks_2[from-1] = stacks_2[from-1].slice(amount);
     
     while (crates.length > 0) {
-      stacks[to-1].unshift(String(crates.pop()));
+      stacks_2[to-1].unshift(String(crates.pop()));
     }
   });
 
 console.log(stacks.map(stack => stack[0]).join(''));
+console.log(stacks_2.map(stack => stack[0]).join(''));
