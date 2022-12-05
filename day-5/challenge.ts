@@ -28,13 +28,13 @@ input.split(/\n\n/)[1]
     let crates = stacks[from-1].slice(0, amount);
     stacks[from-1] = stacks[from-1].slice(amount);
 
-    stacks[to-1].unshift(...crates.reverse());
+    stacks[to-1] = [...crates.reverse(), ...stacks[to-1]];
 
     // Challenge 2
     crates = stacks_2[from-1].slice(0, amount);
     stacks_2[from-1] = stacks_2[from-1].slice(amount);
 
-    stacks_2[to-1].unshift(...crates);
+    stacks_2[to-1] = [...crates, ...stacks_2[to-1]];
   });
 
 console.log(stacks.map(stack => stack[0]).join(''));
