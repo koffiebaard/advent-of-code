@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 
-const input = readFileSync('./input', 'utf-8');
+// const input = readFileSync('./input', 'utf-8');
+const input = readFileSync('./aoc_2022_day05_large_input.txt', 'utf-8');
 let stacks: string[][] = [];
 
 input.split(/\n\n/)[0]
@@ -25,16 +26,12 @@ input.split(/\n\n/)[1]
     let [amount, from, to] = (line.match(/\d+/g) || []).map(move => parseInt(move));
 
     // Challenge 1
-    let crates = stacks[from-1].slice(0, amount);
-    stacks[from-1] = stacks[from-1].slice(amount);
-
-    stacks[to-1] = [...crates.reverse(), ...stacks[to-1]];
+    let crates = stacks[from-1].splice(0, amount);
+    stacks[to-1] = crates.reverse().concat(stacks[to-1]);
 
     // Challenge 2
-    crates = stacks_2[from-1].slice(0, amount);
-    stacks_2[from-1] = stacks_2[from-1].slice(amount);
-
-    stacks_2[to-1] = [...crates, ...stacks_2[to-1]];
+    crates = stacks_2[from-1].splice(0, amount);
+    stacks_2[to-1] = crates.concat(stacks_2[to-1]);
   });
 
 console.log(stacks.map(stack => stack[0]).join(''));
