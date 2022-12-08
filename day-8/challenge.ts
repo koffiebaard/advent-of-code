@@ -8,10 +8,20 @@ let visible_trees = 0, highest_score = 0;
 
 grid.map((x, index_x) => {
   x.map((y, index_y) => {
-    let left = x.slice(0, index_y).reverse().reduce((winning_index: number, tree, index) => tree >= y && !winning_index ? index+1 : winning_index, 0);
-    let right = x.slice(index_y+1).reduce((winning_index: number, tree, index) => tree >= y && !winning_index ? index+1 : winning_index, 0);
-    let top = grid.slice(0, index_x).reverse().reduce((winning_index: number, treeline, index) => treeline[index_y] >= y && !winning_index ? index+1 : winning_index, 0);
-    let bottom = grid.slice(index_x+1).reduce((winning_index: number, treeline, index) => treeline[index_y] >= y && !winning_index ? index+1 : winning_index, 0);
+    let left = x
+      .slice(0, index_y)
+      .reverse()
+      .reduce((windex: number, tree, index) => tree >= y && !windex ? index+1 : windex, 0);
+    let right = x
+      .slice(index_y+1)
+      .reduce((windex: number, tree, index) => tree >= y && !windex ? index+1 : windex, 0);
+    let top = grid
+      .slice(0, index_x)
+      .reverse()
+      .reduce((windex: number, treeline, index) => treeline[index_y] >= y && !windex ? index+1 : windex, 0);
+    let bottom = grid
+      .slice(index_x+1)
+      .reduce((windex: number, treeline, index) => treeline[index_y] >= y && !windex ? index+1 : windex, 0);
 
     if (Math.min(top, left, bottom, right) === 0)
       visible_trees++;
