@@ -5,3 +5,4 @@ challenge2
 .DS_Store
 *large_input*.txt
 aoc_2022*.txt
+node_modules
