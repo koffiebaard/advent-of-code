@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 const input = readFileSync(process.argv[2] ?? './input', 'utf-8');
 
-type Rope = [ Coords ];
+type Rope = Coords[];
 
 type Direction = 'R' | 'L' | 'U' | 'D';
 
@@ -72,9 +72,13 @@ function move_tail(tail: Coords, tail_in_front: Coords): Coords {
   throw 'Well shit.';
 }
 
+let tail_positions: number[] = [];
+
 [2, 10].map(amount_of_rope => {
   let rope: Rope = (Array(amount_of_rope).fill({ x: 0, y: 0 }, 0, amount_of_rope) as Rope);
-  let tail_coords = new Set([JSON.stringify(rope.slice(-1)[0])]);
+
+  let tail_coords_1 = new Map<string, boolean>();
+  let tail_coords_2 = new Map<string, boolean>();
 
   input
     .split('\n')
@@ -83,7 +87,7 @@ function move_tail(tail: Coords, tail_in_front: Coords): Coords {
       direction: move.split(' ')[0] as Direction,
       steps: parseInt(move.split(' ')[1])
     }))
-    .map((movement) => {
+    .map((movement, index) => {
       for (let step = 0; step < movement.steps; step++) {
         rope[0] = move_head(rope[0], movement.direction);
 
@@ -91,9 +95,19 @@ function move_tail(tail: Coords, tail_in_front: Coords): Coords {
           rope[tail] = move_tail(rope[tail], rope[tail-1]);
         }
 
-        tail_coords.add(JSON.stringify(rope.slice(-1)[0]));
+        (index < 980000 ? tail_coords_1 : tail_coords_2).set(`${rope.slice(-1)[0].x} ${rope.slice(-1)[0].y}`, true);
       }
-  })
+      // console.log(tail_coords_1.size, tail_coords_2.size);
+    })
 
-  console.log(tail_coords.size);
+  let tail_position = tail_coords_1.size;
+
+  for (const key of tail_coords_2.keys()) {
+    if (!tail_coords_1.has(key))
+      tail_position++;
+  }
+
+  tail_positions.push(tail_position);
 });
+
+console.log(tail_positions);
