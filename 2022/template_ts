@@ -1,0 +1,10 @@
+import { readFileSync } from 'fs';
+
+const input = readFileSync(process.argv[2] ?? './input', 'utf-8');
+
+input
+  .split('\n')
+  .filter(output => output !== '')
+  .map(line => {
+    
+  });
