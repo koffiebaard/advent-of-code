@@ -6,18 +6,27 @@ let cycles = 0;
 let x = 1;
 var signal_strength_sum = 0;
 var position = 0;
-var colors = [31, 31, 35, 33, 32, 34, 36, 36];
+var colors = [
+   '38;2;255;0;0' // rid
+  ,'38;2;255;165;0' // urrange
+  ,'38;2;255;255;0' // yellah
+  ,'38;2;0;208;0' // lit grin
+  ,'38;2;0;158;0' // grin
+  ,'38;2;0;0;255' // bluh
+  ,'38;2;95;0;150' // purpl
+  ,'38;2;255;145;255' // pnk
+];
 
 function write_to_screen(lit_pixel: boolean, position: number) {
   let color = colors[Math.floor((position+1) / 5)];
 
   if (lit_pixel)
-    process.stdout.write(`\x1b[${color}m■\x1b[0m`);
+    process.stdout.write(`\x1b[${color}m⬔\x1b[0m`);
   else
-    process.stdout.write(`\x1b[8;1m■\x1b[0m`);
+    process.stdout.write(`\x1b[8;1m⬔\x1b[0m`);
   
   if (position !== 0 && (position+1) % 5 === 0)
-    process.stdout.write(`\x1b[8;1m■■\x1b[0m`);
+    process.stdout.write(`\x1b[8;1m⬔⬔\x1b[0m`);
 }
 
 function write_signal_strength(cycles: number, x: number) {
