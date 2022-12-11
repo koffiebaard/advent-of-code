@@ -73,3 +73,31 @@ let monkeys: Monkey[] = input
 
   console.log(monkey_business.sort((a, b) => b - a).slice(0, 2).reduce((total, business) => total * business));
 });
+
+let red = '38;2;255;0;0';
+let green = '38;2;0;208;0';
+let white = '38;2;245;245;245';
+
+let rs = `\x1b[${red}m`;
+let gs = `\x1b[${green}m`;
+let ws = `\x1b[${white}m`;
+let e = `\x1b[0m`;
+
+// MONKE
+console.log(`
+                ${rs}▓▓▓▓▓▓▓▓▓▓${e}                          
+              ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                        
+            ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                      
+          ${rs}▓▓▓▓${gs}░░░░░░${rs}▓▓${gs}░░░░░░${rs}▓▓▓▓${e}                    
+      ${gs}░░░░${rs}▓▓${gs}░░░░░░░░░░░░░░░░░░${rs}▓▓${gs}░░░░                
+      ${gs}░░░░${rs}▓▓${gs}░░  ${ws}██${gs}░░░░░░  ${ws}██${gs}░░${rs}▓▓${gs}░░░░                
+        ${gs}░░${rs}▓▓${gs}░░${ws}████${gs}░░░░░░${ws}████${gs}░░${rs}▓▓${gs}░░                  
+          ${rs}▓▓${gs}░░░░░░░░░░░░░░░░░░${rs}▓▓${e}                    
+            ${rs}▓▓${gs}░░░░░░░░░░░░░░${rs}▓▓${e}                      
+              ${rs}▓▓▓▓${gs}░░░░░░${rs}▓▓▓▓${e}                        
+                  ${rs}▓▓▓▓▓▓${e}        ${gs}░░                  
+                ${rs}▓▓▓▓▓▓▓▓▓▓      ▓▓${e}                  
+                ${rs}▓▓▓▓▓▓▓▓▓▓    ▓▓▓▓${e}                  
+              ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                    
+              ${rs}▓▓▓▓${gs}░░${rs}▓▓${gs}░░${rs}▓▓▓▓${e}                        
+`);
