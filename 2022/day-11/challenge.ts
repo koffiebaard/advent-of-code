@@ -13,6 +13,7 @@ const input = readFileSync(process.argv[2] ?? './input', 'utf-8');
 
 // One mod to rule them all
 let moddatnou = 1;
+let challenges: number[] = [];
 
 function calculate_worry_level(worry_level: number, operator: string, operation: string, relief: boolean): number {
   let operation_number = operation === 'old' ? worry_level : Number(operation);
@@ -71,20 +72,43 @@ let monkeys: Monkey[] = input
     });
   }
 
-  console.log(monkey_business.sort((a, b) => b - a).slice(0, 2).reduce((total, business) => total * business));
+  challenges.push(monkey_business.sort((a, b) => b - a).slice(0, 2).reduce((total, business) => total * business));
 });
 
-let red = '38;2;255;0;0';
-let green = '38;2;0;208;0';
-let white = '38;2;245;245;245';
+write_speech_bubble(String(challenges[0]), String(challenges[1]));
+MONKE();
 
-let rs = `\x1b[${red}m`;
-let gs = `\x1b[${green}m`;
-let ws = `\x1b[${white}m`;
-let e = `\x1b[0m`;
+
+function write_speech_bubble(line1: string, line2: string = "", line3: string = "") {
+  let red = '38;2;255;0;0';
+  let rs = `\x1b[${red}m`;
+  let e = `\x1b[0m`;
+
+  console.log(`
+   ____________________________
+  /                            \\
+ |   ${rs}${line1.padEnd(24)}${e}   |
+ |   ${rs}${line2.padEnd(24)}${e}   |
+ |   ${rs}${line3.padEnd(24)}${e}   |
+  \\_____    ___________________/
+        |   |
+         -_  |
+           -_ |
+             -|
+  `);
+}
 
 // MONKE
-console.log(`
+function MONKE () {
+  let red = '38;2;255;0;0';
+  let green = '38;2;0;208;0';
+  let white = '38;2;245;245;245';
+
+  let rs = `\x1b[${red}m`;
+  let gs = `\x1b[${green}m`;
+  let ws = `\x1b[${white}m`;
+  let e = `\x1b[0m`;
+  console.log(`
                 ${rs}▓▓▓▓▓▓▓▓▓▓${e}                          
               ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                        
             ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                      
@@ -100,4 +124,5 @@ console.log(`
                 ${rs}▓▓▓▓▓▓▓▓▓▓    ▓▓▓▓${e}                  
               ${rs}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${e}                    
               ${rs}▓▓▓▓${gs}░░${rs}▓▓${gs}░░${rs}▓▓▓▓${e}                        
-`);
+  `);
+}
