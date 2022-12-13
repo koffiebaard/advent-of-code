@@ -39,16 +39,15 @@ class Ent {
     this.adjacent[edge].push(value);
   }
 
-  build_path (goal: string, root: string, predecessors: Predecessors) {
+  build_path (goal: string, predecessors: Predecessors) {
     const path = [goal];
-
     let predecessor = predecessors[goal];
-    while (predecessor !== root && predecessor !== null) {
+
+    while (predecessor !== null) {
       path.push(predecessor);
       predecessor = predecessors[predecessor];
     }
 
-    path.push(root);
     return path.reverse().join(' - ');
   }
 
@@ -62,15 +61,12 @@ class Ent {
     const letter = (value: string) => value.split(' ')[2];
 
     while (queue.length) {
-      let value: string | undefined = queue.shift();
-
-      if (value === undefined)
-        return null;
+      let value: string = String(queue.shift());
 
       if (value === goal) {
         return {
           distance: edges[goal],
-          path: this.build_path(goal, root, predecessors)
+          path: this.build_path(goal, predecessors)
         };
       }
 
@@ -129,5 +125,25 @@ part2.map(start => {
   least_steps = steps;
 });
 
-console.log(tree_beard.bfs(goal, part1)?.distance);
-console.log(least_steps);
+
+let red = '38;2;255;0;0';
+let green = '38;2;0;208;0';
+let rs = `\x1b[${red}m`;
+let gs = `\x1b[${green}m`;
+let ws = `\x1b[97m`;
+let e = `\x1b[0m`;
+
+console.log(`${ws}   __   __             __                     __  ___
+ _(  )_(  )_          (  )     __            (_ )(  _)
+(_ ${gs}${tree_beard.bfs(goal, part1)?.distance} ${least_steps}${ws} _)         (__)    (__)            (_)(__)
+  (_) (____)${e}`);
+
+console.log(`${rs}          /\\
+         /${ws}**${rs}\\
+        /${ws}****${rs}\\   /\\
+       /      \\ /${ws}**${rs}\\                     
+      /  /\\    /    \\        /\\    /\\  /\\      /\\            /\\/\\/\\  /\\
+     /  /  \\  /      \\      /  \\/\\/  \\/  \\  /\\/  \\/\\  /\\  /\\/ / /  \\/  \\
+    /  /    \\/ /\\     \\    /    \\ \\  /    \\/ /   /  \\/  \\/  \\  /    \\   \\
+   /  /  ${gs}*${rs}   \\/${gs}*${rs} \\/\\   \\  /      \\    /   / ${gs}*${rs}  \\  ${gs}*${rs}  \\    ${gs}*${rs}    
+${gs}__${rs}/${gs}__${rs}/${gs}___|___${rs}/${gs}_|_${rs}/${gs}__${rs}\\${gs}___${rs}\\${gs}___________________|_____|_______|________________${e}`);
