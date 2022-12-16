@@ -22,7 +22,7 @@ function map_cave_system(input: number[][][], challenge: number) {
   if (challenge === 2)
     grid[highest_y].fill('#');
 
-  input.map(coords => {
+input.map(coords => {
       coords.forEach((coord, index) => {
         if (coords[index+1] === undefined)
           return;
@@ -116,6 +116,10 @@ let sandies_2 = drop_sand_like_its_hot(grid_2, {y: 0, x: 500});
 let blue = '38;2;0;0;255';
 let gray = '38;2;30;20;70';
 let brown = '38;2;150;75;0';
+let red = '38;2;255;0;0';
+let green = '38;2;0;208;0';
+let rs = `\x1b[${red}m`;
+let gs = `\x1b[${green}m`;
 let brs = `\x1b[${brown}m`;
 let bs = `\x1b[${blue}m`;
 let grs = `\x1b[${gray}m`;
@@ -127,20 +131,20 @@ let lowest_y = input.flat().reduce((y, coords) => coords[1] < y ? coords[1] : y,
 let highest_y = input.flat().reduce((y, coords) => coords[1] > y ? coords[1] : y, 0);
 let highest_x = input.flat().reduce((x, coords) => coords[0] > x ? coords[0] : x, 0);
 
-console.log(`${ws}           _o_    
-       ,-.'---\`.__
-      ((j\`=====',-'${bs}o${ws}
-       \`-\\     /   ${bs}◒${ws}
-          \`-=-'    ${bs}◒${e}`);
+let padding = ' '.repeat(500-(lowest_x-7)-13);
+
+let pad_center = (line: string, count: number) => line.padStart(line.length / 2 + (count / 2), ' ').padEnd(count, ' ');
+let sandies_challenge1 = pad_center(sandies.toString(), 4);
+let sandies_challenge2 = pad_center(sandies_2.toString(), 5);
+
+console.log(`${padding}${ws}     _o_    
+${padding} ,-.'---\`.__
+${padding}((j\`=====',-'${bs}o${ws}
+${padding} \`-\\     /   ${bs}◒${ws}
+${padding}    \`-=-'    ${bs}◒${e}`);
 
 for (let y = lowest_y-2; y <= highest_y; y++) {
-  for (let x = lowest_x-2; x <= highest_x+2; x++) {
-    // write header to show sand entry
-    if (y === lowest_y-2) {
-      x === 500 ? process.stdout.write(`${bs}◒${e}`) : process.stdout.write(' ');
-      continue;
-    }
-
+  for (let x = lowest_x-7; x <= highest_x+2; x++) {
     process.stdout.write(
       grid[y][x]
         .replace('O', `${bs}◒${e}`)
@@ -151,5 +155,10 @@ for (let y = lowest_y-2; y <= highest_y; y++) {
   process.stdout.write(`\n`);
 }
 
-console.log(sandies);
-console.log(sandies_2);
+console.log(`
+${grs}    (    
+   )  )  ${ws}
+${rs} :------:${ws}         o0o0o
+${rs}C|======|${ws}     ${rs}._${ws}o0o00o0oo${rs}_.
+${rs} | ${gs}${sandies_challenge1}${rs} |      \\= ${gs}${sandies_challenge2}${rs} =/
+ \`------'       \`-------'${e}`);
