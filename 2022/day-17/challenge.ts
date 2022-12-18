@@ -169,18 +169,7 @@ function draw_block(block: string, coords: Coords) {
 
 function draw_grid() {
   let gray = '38;2;30;20;70';
-  let blue = '38;2;0;0;255';
-  let yellow = '38;2;255;255;0';
-  let brown = '38;2;150;75;0';
-  let red = '38;2;255;0;0';
-  let green = '38;2;0;208;0';
   let grs = `\x1b[${gray}m`;
-  let rs = `\x1b[${red}m`;
-  let gs = `\x1b[${green}m`;
-  let brs = `\x1b[${brown}m`;
-  let bs = `\x1b[${blue}m`;
-  let ys = `\x1b[${yellow}m`;
-  let ws = `\x1b[97m`;
   let e = `\x1b[0m`;
 
   process.stdout.write(`${grs}`);
@@ -195,11 +184,12 @@ function draw_grid() {
     for (let x = 0; x < 7; x++) {
       process.stdout.write(
         grid[y][x]
-          .replace('#', `${bs}⬔${grs}`)
-          .replace('@', `${rs}⬔${grs}`)
-          .replace('=', `${bs}⬔${grs}`)
-          .replace('%', `${ys}⬔${grs}`)
-          .replace('+', `${gs}⬔${grs}`)
+          .replace('#', `🟦`)
+          .replace('@', `🟧`)
+          .replace('=', `🟪`)
+          .replace('%', `🟨`)
+          .replace('+', `🟩`)
+          .replace('.', `➖`)
       );
     }
     process.stdout.write(`\n`);
@@ -257,5 +247,13 @@ solve();
 if (!show_animation) {
   draw_grid();
 
-  console.log(grid.length - get_highest_point() - 1);
+  let red = '38;2;255;0;0';
+
+  let rs = `\x1b[${red}m`;
+  let e = `\x1b[0m`;
+  let answer = grid.length - get_highest_point() - 1;
+  console.log(`\n    🟨🟨
+🟪  🟨🟨
+🟪 ${rs}${answer}${e} 🟩🟩
+🟪🟪  🟩🟩`);
 }
