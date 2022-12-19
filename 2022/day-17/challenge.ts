@@ -26,18 +26,32 @@ let block_shapes: {[key: string]: number[][]} = {
   block: [ [0,0], [1,0], [0,-1], [1,-1] ],
 };
 
+const block_types = ['hor_bar', 'plus', 'l', 'ver_bar', 'block'];
+let block_draw_shapes: {[key: string]: string} = {
+  'hor_bar': '#',
+  'plus': '+',
+  'l': '@',
+  'ver_bar': '=',
+  'block': '%',
+}
+
+const draw_fancy_block = (ascii_block: string) => ascii_block
+  .replace('#', `🟦`)
+  .replace('@', `🟧`)
+  .replace('=', `🟪`)
+  .replace('%', `🟥`) // previously 🟨
+  .replace('+', `🟩`)
+  .replace('.', `  `) // previously ➖
+  .replace('-', `🟫`);
+
 var blocks = generate_blocks();
 var air_flow = generate_air_flow();
-const grid: string[][] = [
-  Array(7).fill('.', 0, 7),
-  Array(7).fill('.', 0, 7),
-  Array(7).fill('.', 0, 7),
-  Array(7).fill('.', 0, 7),
-  Array(7).fill('-', 0, 7)
-];
+
+const grid: string[][] = Array.from({length: 14}, e => Array(7).fill('.', 0, 7));
+grid.push(Array(7).fill('-', 0, 7));
 
 function* generate_blocks() {
-  yield* ['hor_bar', 'plus', 'l', 'ver_bar', 'block'];
+  yield* block_types;
 }
 
 function get_block(): string {
@@ -133,31 +147,18 @@ function get_starting_coords(block_type: string = ''): Coords {
 }
 
 function draw_block(block: string, coords: Coords) {
-  let block_type: {[key: string]: string} = {
-    'hor_bar': '#',
-    'plus': '+',
-    'l': '@',
-    'ver_bar': '=',
-    'block': '%',
-  }
 
   block_shapes[block].map(([bx, by]) => {
-    grid[coords.y+by][coords.x+bx] = block_type[block];
+    grid[coords.y+by][coords.x+bx] = block_draw_shapes[block];
   });
 
+  // more fancy height calculation for showing the animation
+  if (show_animation && get_highest_point() < 6) {
+    let compensate_height = 6 - get_highest_point();
+    grid.unshift(...Array.from({length: compensate_height}, e => Array(7).fill('.')));
+  }
 
-  // let ys = block_shapes[block].reduce((height: number[], [bx, by]) => {
-  //   if (!height.includes(by))
-  //     height.push(by);
-
-  //   return height;
-  // }, []);
-  // console.log(`${block} is ${ys.length} high`);
-  
-  // grid.unshift(...Array(ys.length+4).fill(Array(7).fill('.', 0, 7).slice(), 0, ys.length+4));
-
-
-  if (get_starting_coords().y < 4) {
+  if (!show_animation && get_starting_coords().y < 4) {
     grid.unshift(
       Array(7).fill('.', 0, 7),
       Array(7).fill('.', 0, 7),
@@ -167,39 +168,44 @@ function draw_block(block: string, coords: Coords) {
   }
 }
 
-function draw_grid() {
-  let gray = '38;2;30;20;70';
-  let grs = `\x1b[${gray}m`;
-  let e = `\x1b[0m`;
-
-  process.stdout.write(`${grs}`);
-
-  let drawn_lines = 0;
+function draw_grid(draw_block?: string, draw_block_coords?: Coords, nth_block?: number) {
+  // Map temporary drawing coords so we can easily find them later
+  let temporary_draw_coords: string[] = (draw_block && draw_block_coords) ? block_shapes[draw_block].map(([bx, by]) => {
+    return `${draw_block_coords.y+by}:${draw_block_coords.x+bx}`;
+  }) : [];
 
   for (let y = 0; y < grid.length; y++) {
-
-    if (grid[y].every(block => block === '.'))
-      continue
-
+    let line = '';
     for (let x = 0; x < 7; x++) {
-      process.stdout.write(
-        grid[y][x]
-          .replace('#', `🟦`)
-          .replace('@', `🟧`)
-          .replace('=', `🟪`)
-          .replace('%', `🟨`)
-          .replace('+', `🟩`)
-          .replace('.', `➖`)
-      );
+      if (draw_block && temporary_draw_coords && temporary_draw_coords.includes(`${y}:${x}`)) {
+        line += draw_fancy_block(block_draw_shapes[draw_block]);
+      } else {
+        line += draw_fancy_block(grid[y][x]);
+      }
     }
-    process.stdout.write(`\n`);
-    drawn_lines++;
-    
-    if (show_animation && drawn_lines > 15)
+
+    let left_wall = y > 3 && y < 11 ? `🟫`.repeat(2).concat(y === 7 ? String(nth_block).padStart(7).padEnd(12) : '  '.repeat(6)).concat('🟫'.repeat(2)) : `🟫`.repeat(10);
+    // let right_wall = `🟫`.repeat(10);
+
+    let index = block_types.findIndex(block => block === draw_block);
+    let next_block = block_types[index+1] !== undefined ? block_types[index+1] : block_types[0];
+
+    let right_wall = y > 3 && y < 11 ? `🟫`.repeat(2).concat(y === 6 ? String('').padStart(7).padEnd(12) : '  '.repeat(6)).concat('🟫'.repeat(2)) : `🟫`.repeat(10);
+    block_shapes[next_block].map(([bx, by]) => {
+      if (y === 8+by)
+        right_wall = right_wall.substring(0, 7+(bx*2)) + draw_fancy_block(block_draw_shapes[next_block]) + right_wall.substring(7+(bx*2) + 2);
+    });
+    process.stdout.write(`${left_wall}${line}${right_wall}\n`);
+
+    if (show_animation && y > 15)
       break;
   }
+}
 
-  process.stdout.write(`${e}`);
+async function draw_animated_grid(nth_block: number, block?: string, coords?: Coords) {
+  await new Promise(resolve => setTimeout(resolve, 40));
+  process.stdout.write('\x1Bc');
+  draw_grid(block, coords, nth_block);
 }
 
 async function solve() {
@@ -207,15 +213,10 @@ async function solve() {
     let block = get_block();
     let coords = get_starting_coords(block);
 
-    if (show_animation) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      process.stdout.write('\x1Bc');
-      draw_grid();
-    } else {
-      // console.log(i, grid.length - get_highest_point() - 1);
-    }
-
     while ('falling') {
+      if (show_animation)
+        await draw_animated_grid(i+1, block, coords);
+
       // First the air flow, then moving down
       let direction = get_air_flow_direction();
 
@@ -224,18 +225,26 @@ async function solve() {
 
       let collision_sideways = detect_collision(block, coords.x + move, coords.y);
 
-      if (collision_sideways === Collision.None)
+      if (collision_sideways === Collision.None) {
         coords.x += move;
+        if (show_animation)
+          await draw_animated_grid(i+1, block, coords);
+      }
 
       // move down
       let collision_down = detect_collision(block, coords.x, coords.y + 1);
 
-      if (collision_down === Collision.None)
+      if (collision_down === Collision.None) {
         coords.y++;
+        if (show_animation)
+          await draw_animated_grid(i+1, block, coords);
+      }
 
       // We're done. Pack it up boys.
       if (collision_down === Collision.Bottom) {
         draw_block(block, coords);
+        if (show_animation)
+          await draw_animated_grid(i+1);
         break;
       }
     }
@@ -252,8 +261,10 @@ if (!show_animation) {
   let rs = `\x1b[${red}m`;
   let e = `\x1b[0m`;
   let answer = grid.length - get_highest_point() - 1;
-  console.log(`\n    🟨🟨
-🟪  🟨🟨
-🟪 ${rs}${answer}${e} 🟩🟩
-🟪🟪  🟩🟩`);
+
+  let wall = `🟫`.repeat(10);
+  console.log(`\n${wall}    🟨🟨      ${wall}
+${wall}🟪  🟨🟨      ${wall}
+${wall}🟪 ${rs}${answer}${e} 🟩🟩  ${wall}
+${wall}🟪🟪  🟩🟩    ${wall}`);
 }
