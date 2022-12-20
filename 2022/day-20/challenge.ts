@@ -21,7 +21,7 @@ function calculate_offset(index: number, number: number, size: number): number {
   return (index + target) % size;
 };
 
-function move_number(numbers: Fuck[], number: Fuck, from: number, to: number) {
+function move_number(numbers: Fuck[], number: Fuck, from: number) {
   numbers.splice(from, 1);
   numbers.splice(calculate_offset(from, number.fuck, numbers.length), 0, number);
 }
@@ -38,9 +38,7 @@ function mix_numbers(numbers: number[], mix_amount: number = 1): number[] {
         continue;
 
       let from = mixed_numbers.indexOf(number);
-      let to = calculate_offset(from, number.fuck, mixed_numbers.length);
-
-      move_number(mixed_numbers, number, from, to);
+      move_number(mixed_numbers, number, from);
     }
   }
 
