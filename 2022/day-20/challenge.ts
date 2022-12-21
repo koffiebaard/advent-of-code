@@ -4,15 +4,7 @@ type Fuck = {
   fuck: number
 }
 
-const input = readFileSync(process.argv[2] ?? './input', 'utf-8');
-
-let numbers: number[] = input
-  .split('\n')
-  .filter(output => output !== '')
-  .map(number => parseInt(number))
-
-
-function calculate_offset(index: number, number: number, size: number): number {
+function calculate_index(index: number, number: number, size: number): number {
   let target = number % size;
 
   if (target < 0)
@@ -21,9 +13,9 @@ function calculate_offset(index: number, number: number, size: number): number {
   return (index + target) % size;
 };
 
-function move_number(numbers: Fuck[], number: Fuck, from: number) {
+function move_number(numbers: Fuck[], number: Fuck, from: number, to: number) {
   numbers.splice(from, 1);
-  numbers.splice(calculate_offset(from, number.fuck, numbers.length), 0, number);
+  numbers.splice(to, 0, number);
 }
 
 function mix_numbers(numbers: number[], mix_amount: number = 1): number[] {
@@ -38,7 +30,8 @@ function mix_numbers(numbers: number[], mix_amount: number = 1): number[] {
         continue;
 
       let from = mixed_numbers.indexOf(number);
-      move_number(mixed_numbers, number, from);
+      let to = calculate_index(from, number.fuck, numbers.length-1);
+      move_number(mixed_numbers, number, from, to);
     }
   }
 
@@ -60,6 +53,14 @@ function sum_zero_offsets(numbers: number[]) {
 function decrypt(numbers: number[], decryption_key: number) {
   return numbers.slice().map(number => number * decryption_key);
 }
+
+
+const input = readFileSync(process.argv[2] ?? './input', 'utf-8');
+
+let numbers: number[] = input
+  .split('\n')
+  .filter(output => output !== '')
+  .map(number => parseInt(number))
 
 // Challenge 1
 let mixed_numbers = mix_numbers(numbers);
