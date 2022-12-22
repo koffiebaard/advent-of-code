@@ -7,3 +7,4 @@ challenge2
 aoc_2022*.txt
 node_modules
 example
+.idea
