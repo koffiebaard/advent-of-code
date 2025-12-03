@@ -9,3 +9,4 @@ node_modules
 example
 example2
 .idea
+__pycache__

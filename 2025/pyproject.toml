@@ -1,0 +1,14 @@
+[project]
+name = "aoc2025"
+version = "1.0.0"
+description = "Advent of Code 2025"
+authors = [{name = "Koffiebaard"}]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
